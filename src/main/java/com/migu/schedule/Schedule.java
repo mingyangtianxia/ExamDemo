@@ -126,12 +126,28 @@ public class Schedule {
         	List<Observer> nodeList=server.getList();
         	int nodeListCount=nodeList.size();
         	server.notifyObserver();
-        	for (int i=0;i < storageListCount;) {  		
-        		for (Observer observer : nodeList) {
-        			observer.addConsumerList(storageList.get(i));
-        			i++;
-    			}
-    		}
+        	boolean equalFlag=false;
+        	for (int i=0;i < storageListCount-1;i++) {  	
+        		if(storageList.get(i).getConsumption()!=storageList.get(i+1).getConsumption()){
+        			equalFlag=true;
+            		break;
+        		}
+        	}
+        	if(equalFlag){
+        		for (int i=0;i < storageListCount;) { 
+            		for (Observer observer : nodeList) {
+            			observer.addConsumerList(storageList.get(i));
+            			i++;
+        			}
+        		}
+        	}else{
+        		for (int z = 0;z<nodeListCount;z++) {
+        			for (int i=0;i < storageListCount/nodeListCount;i++) { 
+        				nodeList.get(z).addConsumerList(storageList.get(i+z*(storageListCount/nodeListCount)));
+        			}
+        		}
+        	}
+        	
         	for (Observer observer : nodeList) {
     			observer.update(consumer);
     		}
